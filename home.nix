@@ -110,6 +110,12 @@
           "diffEditor.hideUnchangedRegions.enabled" = true;
           "git.autofetch" = true;
 
+          "files.associations" = {
+            "*.bu" = "yaml";
+            "*.container" = "yaml";
+            "*.ign" = "json";
+          };
+
           # Nix
           "[nix]" = {
             "editor.tabSize" = 2;
