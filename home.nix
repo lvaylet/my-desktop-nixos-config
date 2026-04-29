@@ -148,6 +148,9 @@
           "git.autofetch" = true;
           "git.confirmSync" = false;
 
+          "terminal.integrated.fontFamily" = "MesloLGM Nerd Font";
+          "terminal.integrated.fontLigatures.enabled" = true;
+
           "files.associations" = {
             "*.bu" = "yaml";
             "*.container" = "yaml";
