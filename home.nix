@@ -97,6 +97,25 @@
       enableZshIntegration = true;
     };
     ripgrep.enable = true; # Recursively search directories for a regex pattern while respecting your gitignore - https://github.com/BurntSushi/ripgrep
+    ssh = {
+      enable = true;
+      # Check options here: https://home-manager-options.extranix.com/?query=programs.ssh
+      enableDefaultConfig = false;
+      matchBlocks = {
+        "rpi3" = {
+          hostname = "192.168.1.68";
+          user = "pi";
+          identityFile = "~/.ssh/id_ed25519";
+          checkHostIP = false; # = StrictHostKeyChecking No
+        };
+        "homelab-vm" = {
+          hostname = "192.168.1.194";
+          user = "core";
+          identityFile = "~/.ssh/id_ed25519";
+          checkHostIP = false; # = StrictHostKeyChecking No
+        };
+      };
+    };
     vscode = {
       enable = true;
       profiles.default = {
