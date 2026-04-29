@@ -116,6 +116,10 @@
         };
       };
     };
+    starship = { # The minimal, blazing-fast, and infinitely customizable prompt for any shell! - https://starship.rs/guide/
+      enable = true;
+      enableZshIntegration = true;
+    };
     vscode = {
       enable = true;
       profiles.default = {
@@ -241,7 +245,7 @@
     #   org.gradle.daemon.idletimeout=3600000
     # '';
 
-    # ".config/starship.toml".source = dotfiles/starship.toml;
+    ".config/starship.toml".source = dotfiles/starship.toml;
 
     # The configuration files below are not compatible with Yazi 0.3.3 (Nixpkgs 2024-09-04) installed by Home Manager. Use flakes instead to access the latest, bleeding edge version?
     # ".config/yazi/yazi.toml".source = dotfiles/yazi/yazi.toml;
