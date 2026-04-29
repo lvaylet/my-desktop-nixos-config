@@ -153,7 +153,7 @@
 
           "files.associations" = {
             "*.bu" = "yaml";
-            "*.container" = "yaml";
+            "*.container" = "ini";
             "*.ign" = "json";
           };
 
