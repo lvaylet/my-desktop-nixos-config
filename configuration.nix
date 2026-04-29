@@ -35,8 +35,10 @@
   # Enable networking.
   networking.networkmanager.enable = true;
 
-  # VMware Workstation.
-  virtualisation.vmware.host.enable = true;
+  virtualisation = {
+    vmware.host.enable = true; # VMware Workstation
+    podman.enable = true; # A daemonless container engine for developing, managing, and running OCI Containers on your Linux System.
+  };
 
   # Set your time zone.
   time.timeZone = "Europe/Paris";
