@@ -20,7 +20,7 @@
   nixpkgs.config.allowUnfree = true;
 
   # Bootloader and kernel.
-  boot.loader.systemd-boot.enable = true;
+  boot.loader.limine.enable = true; # A modern, advanced, portable, multi-protocol bootloader and boot manager. For additional Limine module configuration options, refer to https://search.nixos.org/options?channel=unstable&show=boot.loader.limine.
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_latest; # Recent kernel for recent GPU.
 
