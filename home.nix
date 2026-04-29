@@ -108,6 +108,7 @@
           "editor.formatOnSave" = true;
           "files.autoSave" = "afterDelay";
           "diffEditor.hideUnchangedRegions.enabled" = true;
+          "git.autofetch" = true;
 
           # Nix
           "[nix]" = {
