@@ -19,8 +19,9 @@
 
     # Nix
     # ---
-    nixd # Nix Language Server, based on Nix libraries - https://github.com/nix-community/nixd
-    nil # Nix Language Server, an incremental analysis assistant for writing in Nix. - https://github.com/oxalica/nil
+    alejandra # An uncompromising Nix Code Formatter - https://github.com/kamadorueda/alejandra
+    nixd # A Nix Language Server, based on Nix libraries - https://github.com/nix-community/nixd
+    nil # A Nix Language Server, an incremental analysis assistant for writing in Nix. - https://github.com/oxalica/nil
   ];
 
   programs = {
@@ -40,9 +41,7 @@
       enable = true;
       enableZshIntegration = true;
     };
-    gemini-cli = {
-      enable = true;
-    };
+    gemini-cli.enable = true;
     git = {
       enable = true;
       settings = {
@@ -88,6 +87,8 @@
       defaultEditor = true;
       viAlias = true;
       vimAlias = true;
+      withRuby = false;
+      withPython3 = false;
     };
     nnn.enable = true; # n³ The unorthodox terminal file manager - https://github.com/jarun/nnn
     pyenv = {
@@ -140,6 +141,7 @@
       enable = true;
       enableZshIntegration = true;
       package = pkgs.yazi;
+      shellWrapperName = "y";
     };
     # zellij = { # A terminal workspace with batteries included - https://github.com/zellij-org/zellij
     #   enable = true;
@@ -234,5 +236,5 @@
   # You should not change this value, even if you update Home Manager. If you do
   # want to update the value, then make sure to first check the Home Manager
   # release notes.
-  home.stateVersion = "26.05";
+  home.stateVersion = "25.11";
 }
