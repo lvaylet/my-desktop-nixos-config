@@ -132,6 +132,7 @@
           "files.autoSave" = "afterDelay";
           "diffEditor.hideUnchangedRegions.enabled" = true;
           "git.autofetch" = true;
+          "git.confirmSync" = false;
 
           "files.associations" = {
             "*.bu" = "yaml";
