@@ -35,6 +35,9 @@
   # Enable networking.
   networking.networkmanager.enable = true;
 
+  # VMware Workstation.
+  virtualisation.vmware.host.enable = true;
+
   # Set your time zone.
   time.timeZone = "Europe/Paris";
 
@@ -53,9 +56,10 @@
     LC_TIME = "fr_FR.UTF-8";
   };
 
-  # Configure Nvidia for GeForce RTX 5070 Ti.
-  # Load Nvidia drivers for Xorg and Wayland.
-  services.xserver.videoDrivers = ["nvidia"];
+  services.xserver.videoDrivers = [
+    "nvidia" # Configure Nvidia for GeForce RTX 5070 Ti. Load Nvidia drivers for Xorg and Wayland.
+    "vmware" # Enable VMware video driver for better performance.
+  ];
 
   # Enable OpenGL.
   hardware.graphics = {

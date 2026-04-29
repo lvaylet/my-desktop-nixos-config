@@ -13,6 +13,10 @@
     # ---
     obsidian
 
+    # Virtualization
+    # ---
+    vmware-workstation
+
     # Nix
     # ---
     nixd # Nix Language Server, based on Nix libraries - https://github.com/nix-community/nixd
