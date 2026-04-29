@@ -127,6 +127,14 @@
   # Enable the GNOME Desktop Environment.
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
+  services.desktopManager.gnome.extraGSettingsOverrides = ''
+    # Change default background.
+    # Check more wallpapers at https://github.com/NixOS/nixos-artwork/tree/master/wallpapers 
+    # Reference: https://nixos.org/manual/nixos/stable/index.html#sec-gnome-gsettings-overrides-example
+    [org.gnome.desktop.background]
+    # picture-uri='file://${pkgs.nixos-artwork.wallpapers.stripes-logo.gnomeFilePath}'
+    picture-uri='file://${pkgs.nixos-artwork.wallpapers.mosaic-blue.gnomeFilePath}'
+  '';
 
   # Configure keymap in X11.
   # FIXME Is this necessary/relevant/required for Wayland?
