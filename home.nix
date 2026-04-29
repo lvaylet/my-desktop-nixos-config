@@ -4,7 +4,17 @@
   home.username = "laurent";
   home.homeDirectory = "/home/laurent";
 
+  # Allow fontconfig to discover fonts and configurations installed through `home.packages` and `nix-env`.
+  # Source: https://mynixos.com/home-manager/option/fonts.fontconfig.enable
+  fonts.fontconfig.enable = true;
+
   home.packages = with pkgs; [
+    # Fonts
+    # ---
+    nerd-fonts.fira-code
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.meslo-lg
+
     # Internet
     # ---
     google-chrome
