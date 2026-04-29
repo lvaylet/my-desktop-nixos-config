@@ -29,7 +29,15 @@
   nixpkgs.config.allowUnfree = true;
 
   # Bootloader and kernel.
-  boot.loader.limine.enable = true; # A modern, advanced, portable, multi-protocol bootloader and boot manager. For additional Limine module configuration options, refer to https://search.nixos.org/options?channel=unstable&show=boot.loader.limine.
+  boot.loader.limine = {
+    # A modern, advanced, portable, multi-protocol bootloader and boot manager.
+    # For additional Limine module configuration options, refer to https://search.nixos.org/options?channel=unstable&show=boot.loader.limine.
+    enable = true;
+    extraConfig = {
+      # Prepended to `limine.conf`. The config format can be found here: https://github.com/limine-bootloader/limine/blob/trunk/CONFIG.md
+      "remember_last_entry" = "yes";
+    };
+  };
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_latest; # Recent kernel for recent GPU.
 
