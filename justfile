@@ -6,3 +6,9 @@ switch:
 
 format:
   alejandra .
+
+collect-garbage:
+  nix-collect-garbage
+
+delete-old-generations:
+  nix-collect-garbage --delete-old
