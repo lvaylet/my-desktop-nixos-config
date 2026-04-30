@@ -8,24 +8,26 @@
   # Source: https://mynixos.com/home-manager/option/fonts.fontconfig.enable
   fonts.fontconfig.enable = true;
 
+  # TODO Use `programs` or `services` when available (vs. `pkgs`)?
   home.packages = with pkgs; [
     # Fonts
     # ---
+    # Nerd Fonts - https://www.nerdfonts.com/
     nerd-fonts.fira-code
     nerd-fonts.jetbrains-mono
     nerd-fonts.meslo-lg
 
     # Internet
     # ---
-    google-chrome
+    google-chrome # Freeware web browser developed by Google - https://www.google.com/chrome/
 
     # Productivity
     # ---
-    obsidian
+    obsidian # Powerful knowledge base that works on top of a local folder of plain text Markdown files - https://obsidian.md/
 
     # Virtualization
     # ---
-    vmware-workstation
+    vmware-workstation # Industry standard desktop hypervisor for x86-64 architecture - https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion
 
     # Nix
     # ---
