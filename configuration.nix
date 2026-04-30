@@ -191,6 +191,8 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
+  # TODO Install packages like `just` and `pre-commit` in devShells
+  # and use them only when necessary with `nix develop` ?
   environment.systemPackages = with pkgs; [
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
 
