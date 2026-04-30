@@ -30,8 +30,10 @@
     # Nix
     # ---
     alejandra # An uncompromising Nix Code Formatter - https://github.com/kamadorueda/alejandra
+    deadnix # Scan .nix files for dead code (unused variable bindings) - https://github.com/astro/deadnix
     nixd # A Nix Language Server, based on Nix libraries - https://github.com/nix-community/nixd
-    nil # A Nix Language Server, an incremental analysis assistant for writing in Nix. - https://github.com/oxalica/nil
+    nil # A Nix Language Server, an incremental analysis assistant for writing in Nix - https://github.com/oxalica/nil
+    statix # Lints and suggestions for the Nix programming language - https://github.com/oppiliappan/statix
   ];
 
   programs = {
