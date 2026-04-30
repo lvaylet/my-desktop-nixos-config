@@ -134,6 +134,8 @@
       enable = true;
       profiles.default = {
         extensions = with pkgs.vscode-extensions; [
+          # Nix
+          # ---
           jnoortheen.nix-ide # Nix IDE
           bbenoist.nix # Nix Language Support for Visual Studio Code
           kamadorueda.alejandra # The Uncompromising Nix Code Formatter
@@ -143,19 +145,21 @@
           # https://code.visualstudio.com/docs/getstarted/settings#_settingsjson
           "editor.fontSize" = 14;
           "editor.formatOnSave" = true;
-          "files.autoSave" = "afterDelay";
-          "diffEditor.hideUnchangedRegions.enabled" = true;
-          "git.autofetch" = true;
-          "git.confirmSync" = false;
 
-          "terminal.integrated.fontFamily" = "MesloLGM Nerd Font";
-          "terminal.integrated.fontLigatures.enabled" = true;
+          "diffEditor.hideUnchangedRegions.enabled" = true;
 
           "files.associations" = {
             "*.bu" = "yaml";
             "*.container" = "ini";
             "*.ign" = "json";
           };
+          "files.autoSave" = "afterDelay";
+
+          "git.autofetch" = true;
+          "git.confirmSync" = false;
+
+          "terminal.integrated.fontFamily" = "MesloLGM Nerd Font";
+          "terminal.integrated.fontLigatures.enabled" = true;
 
           # Nix
           "[nix]" = {
