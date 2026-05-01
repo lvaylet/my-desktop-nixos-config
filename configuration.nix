@@ -183,9 +183,9 @@
       "networkmanager"
       "wheel"
     ];
-    packages = with pkgs; [
-      #  thunderbird
-    ];
+    # packages = with pkgs; [
+    #   #  thunderbird
+    # ];
     shell = pkgs.zsh;
   };
 
