@@ -124,17 +124,20 @@
     package = config.boot.kernelPackages.nvidiaPackages.latest;
   };
 
-  # Enable the GNOME Desktop Environment.
-  services.displayManager.gdm.enable = true;
-  services.desktopManager.gnome.enable = true;
-  services.desktopManager.gnome.extraGSettingsOverrides = ''
-    # Change default background.
-    # Check more wallpapers at https://github.com/NixOS/nixos-artwork/tree/master/wallpapers 
-    # Reference: https://nixos.org/manual/nixos/stable/index.html#sec-gnome-gsettings-overrides-example
-    [org.gnome.desktop.background]
-    # picture-uri='file://${pkgs.nixos-artwork.wallpapers.stripes-logo.gnomeFilePath}'
-    picture-uri='file://${pkgs.nixos-artwork.wallpapers.mosaic-blue.gnomeFilePath}'
-  '';
+  # Enable the COSMIC Desktop Environment.
+  services.desktopManager.cosmic.enable = true;
+  services.displayManager.cosmic-greeter.enable = true;
+  # Enable automatic login (only with `cosmic-greeter` login manager).
+  # Reference: https://wiki.nixos.org/wiki/COSMIC#Installation_(starting_with_NixOS_25.05)
+  services.displayManager.autoLogin = {
+    enable = true;
+    user = "laurent";
+  };
+  # Slightly improve the performance by enabling system76's own scheduler.
+  # References:
+  # - https://wiki.nixos.org/wiki/COSMIC#Optimization
+  # - https://github.com/pop-os/system76-scheduler
+  services.system76-scheduler.enable = true;
 
   # Configure keymap in X11.
   # FIXME Is this necessary/relevant/required for Wayland?
