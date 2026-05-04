@@ -1,3 +1,5 @@
+default: format lint build
+
 # Rebuild
 build:
   nh os build .
@@ -17,6 +19,10 @@ test:
 format:
   alejandra .
 
+lint:
+  deadnix
+  statix check
+
 collect-garbage:
   nix-collect-garbage
 
@@ -26,5 +32,5 @@ delete-old-generations:
 clean:
   nh clean user
 
-clean-all keep=1:
+clean-all keep="1":
   nh clean all --keep {{keep}}
