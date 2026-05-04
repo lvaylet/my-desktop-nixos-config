@@ -1,14 +1,18 @@
+# Rebuild
 build:
-  nixos-rebuild build --flake .#nixos-desktop
-
-build-nh:
   nh os build .
 
+# Rebuild and switch
 switch:
-  sudo nixos-rebuild switch --flake .#nixos-desktop
-
-switch-nh:
   nh os switch .
+
+# Rebuild and switch after boot
+boot:
+  nh os boot .
+
+# Rebuild and activate but not switch
+test:
+  nh os test .
 
 format:
   alejandra .
@@ -22,5 +26,5 @@ delete-old-generations:
 clean:
   nh clean user
 
-clean-all:
-  nh clean all
+clean-all keep=1:
+  nh clean all --keep {{keep}}
