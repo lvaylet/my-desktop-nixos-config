@@ -18,7 +18,7 @@
   ];
 
   # For sudoless `cachix`.
-  nix.settings.trusted-users = [ "root" "laurent" ];
+  nix.settings.trusted-users = ["root" "laurent"];
 
   # Garbage collection and store optimization.
   nix.gc = {
@@ -212,6 +212,35 @@
 
     nvtopPackages.nvidia
   ];
+
+  programs.nvf = {
+    enable = true;
+    settings = {
+      vim = {
+        viAlias = false;
+        vimAlias = true;
+
+        theme = {
+          enable = true;
+          name = "gruvbox";
+          style = "dark";
+        };
+
+        statusline.lualine.enable = true; # Status line
+        telescope.enable = true; # Fuzzy finder
+        autocomplete.nvim-cmp.enable = true; # Fancy completion menu
+
+        languages = {
+          enableLSP = true;
+          enableTreesitter = true;
+
+          nix.enable = true;
+          ts.enable = true;
+          rust.enable = true;
+        };
+      };
+    };
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

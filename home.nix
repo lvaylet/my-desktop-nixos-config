@@ -97,15 +97,6 @@
     };
     jq.enable = true; # A lightweight and flexible command-line JSON processor - https://jqlang.github.io/jq/
     lazygit.enable = true; # A simple terminal UI for git commands - https://github.com/jesseduffield/lazygit
-    neovim = {
-      # An hyperextensible Vim-based text editor - https://neovim.io/
-      enable = true;
-      defaultEditor = true;
-      viAlias = true;
-      vimAlias = true;
-      withRuby = false;
-      withPython3 = false;
-    };
     nnn.enable = true; # n³ The unorthodox terminal file manager - https://github.com/jarun/nnn
     pyenv = {
       # Simple Python version management - https://github.com/pyenv/pyenv
