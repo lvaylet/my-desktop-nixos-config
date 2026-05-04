@@ -231,11 +231,28 @@
         telescope.enable = true; # Fuzzy finder
         autocomplete.nvim-cmp.enable = true; # Fancy completion menu
 
-        lsp.enable = true;
+        lsp = {
+          enable = true;
+          formatOnSave = true;
+        };
         languages = {
           enableTreesitter = true;
 
-          nix.enable = true;
+          nix = {
+            enable = true;
+            lsp = {
+              enable = true;
+              servers = ["nixd"];
+            };
+            format = {
+              enable = true;
+              type = ["alejandra"];
+            };
+            extraDiagnostics = {
+              enable = true;
+              types = ["statix" "deadnix"];
+            };
+          };
           typescript.enable = true;
           rust.enable = true;
         };
