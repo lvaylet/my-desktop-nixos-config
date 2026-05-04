@@ -222,8 +222,9 @@
 
         theme = {
           enable = true;
-          name = "gruvbox";
+          name = "nord";
           style = "dark";
+          transparent = true;
         };
 
         statusline.lualine.enable = true; # Status line
