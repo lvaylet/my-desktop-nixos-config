@@ -37,6 +37,7 @@
     nil # A Nix Language Server, an incremental analysis assistant for writing in Nix - https://github.com/oxalica/nil
     statix # Lints and suggestions for the Nix programming language - https://github.com/oppiliappan/statix
     nh # Yet another Nix CLI helper - https://github.com/nix-community/nh
+    cachix # A service for Nix binary cache hosting - https://github.com/cachix/cachix
   ];
 
   programs = {

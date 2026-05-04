@@ -17,6 +17,9 @@
     "flakes"
   ];
 
+  # For sudoless `cachix`.
+  nix.settings.trusted-users = [ "root" "laurent" ];
+
   # Garbage collection and store optimization.
   nix.gc = {
     automatic = true;
