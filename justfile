@@ -29,8 +29,8 @@ collect-garbage:
 delete-old-generations:
   nix-collect-garbage --delete-old
 
-clean:
-  nh clean user
+clean keep="1":
+  nh clean user --keep {{keep}}
 
 clean-all keep="1":
   nh clean all --keep {{keep}}
