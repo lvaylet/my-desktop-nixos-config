@@ -123,7 +123,8 @@
         };
       };
     };
-    starship = { # The minimal, blazing-fast, and infinitely customizable prompt for any shell! - https://starship.rs/guide/
+    starship = {
+      # The minimal, blazing-fast, and infinitely customizable prompt for any shell! - https://starship.rs/guide/
       enable = true;
       enableZshIntegration = true;
     };
@@ -182,7 +183,7 @@
           # Language Specific Editor Settings
           # ---
           # Source: https://code.visualstudio.com/docs/configure/settings#_language-specific-editor-settings
-          
+
           # Nix
           # ---
           # Easiest Way To Write Nix | Code Editor Setup, by Vimjoyer
@@ -198,7 +199,7 @@
           "nix.serverPath" = "nixd"; # The path to the LSP server executable: "nil", "nixd", or ["executable", "argument1", ...]
           "nix.serverSettings" = {
             "nixd" = {
-              "formatting.command" = [ "alejandra" ]; # nixfmt, nixpkgs-fmt, alejandra
+              "formatting.command" = ["alejandra"]; # nixfmt, nixpkgs-fmt, alejandra
             };
           };
         };
