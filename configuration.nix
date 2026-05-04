@@ -230,12 +230,12 @@
         telescope.enable = true; # Fuzzy finder
         autocomplete.nvim-cmp.enable = true; # Fancy completion menu
 
+        lsp.enable = true;
         languages = {
-          enableLSP = true;
           enableTreesitter = true;
 
           nix.enable = true;
-          ts.enable = true;
+          typescript.enable = true;
           rust.enable = true;
         };
       };
