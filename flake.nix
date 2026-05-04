@@ -19,6 +19,10 @@
       # on a binary cache.
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    alejandra = {
+      url = "github:kamadorueda/alejandra";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -26,6 +30,7 @@
     nixpkgs,
     home-manager,
     nvf,
+    alejandra,
     ...
   } @ inputs: {
     nixosConfigurations."nixos-desktop" = nixpkgs.lib.nixosSystem {
@@ -43,5 +48,9 @@
         nvf.nixosModules.default
       ];
     };
+
+    # Configure formatter used by `nix fmt`.
+    # Reference: https://nix.dev/manual/nix/2.34/command-ref/new-cli/nix3-fmt.html
+    formatter.x86_64-linux = inputs.alejandra.packages.x86_64-linux.default;
   };
 }
