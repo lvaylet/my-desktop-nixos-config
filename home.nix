@@ -1,44 +1,46 @@
 {pkgs, ...}: {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
-  home.username = "laurent";
-  home.homeDirectory = "/home/laurent";
+  home = {
+    username = "laurent";
+    homeDirectory = "/home/laurent";
+
+    # TODO Use `programs` or `services` when available (vs. `pkgs`)?
+    packages = with pkgs; [
+      # Fonts
+      # ---
+      # Nerd Fonts - https://www.nerdfonts.com/
+      nerd-fonts.fira-code
+      nerd-fonts.jetbrains-mono
+      nerd-fonts.meslo-lg
+
+      # Internet
+      # ---
+      google-chrome # Freeware web browser developed by Google - https://www.google.com/chrome/
+
+      # Productivity
+      # ---
+      obsidian # Powerful knowledge base that works on top of a local folder of plain text Markdown files - https://obsidian.md/
+
+      # Virtualization
+      # ---
+      vmware-workstation # Industry standard desktop hypervisor for x86-64 architecture - https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion
+
+      # Nix
+      # ---
+      alejandra # An uncompromising Nix Code Formatter - https://github.com/kamadorueda/alejandra
+      deadnix # Scan .nix files for dead code (unused variable bindings) - https://github.com/astro/deadnix
+      nixd # A Nix Language Server, based on Nix libraries - https://github.com/nix-community/nixd
+      nil # A Nix Language Server, an incremental analysis assistant for writing in Nix - https://github.com/oxalica/nil
+      statix # Lints and suggestions for the Nix programming language - https://github.com/oppiliappan/statix
+      nh # Yet another Nix CLI helper - https://github.com/nix-community/nh
+      cachix # A service for Nix binary cache hosting - https://github.com/cachix/cachix
+    ];
+  };
 
   # Allow fontconfig to discover fonts and configurations installed through `home.packages` and `nix-env`.
   # Source: https://mynixos.com/home-manager/option/fonts.fontconfig.enable
   fonts.fontconfig.enable = true;
-
-  # TODO Use `programs` or `services` when available (vs. `pkgs`)?
-  home.packages = with pkgs; [
-    # Fonts
-    # ---
-    # Nerd Fonts - https://www.nerdfonts.com/
-    nerd-fonts.fira-code
-    nerd-fonts.jetbrains-mono
-    nerd-fonts.meslo-lg
-
-    # Internet
-    # ---
-    google-chrome # Freeware web browser developed by Google - https://www.google.com/chrome/
-
-    # Productivity
-    # ---
-    obsidian # Powerful knowledge base that works on top of a local folder of plain text Markdown files - https://obsidian.md/
-
-    # Virtualization
-    # ---
-    vmware-workstation # Industry standard desktop hypervisor for x86-64 architecture - https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion
-
-    # Nix
-    # ---
-    alejandra # An uncompromising Nix Code Formatter - https://github.com/kamadorueda/alejandra
-    deadnix # Scan .nix files for dead code (unused variable bindings) - https://github.com/astro/deadnix
-    nixd # A Nix Language Server, based on Nix libraries - https://github.com/nix-community/nixd
-    nil # A Nix Language Server, an incremental analysis assistant for writing in Nix - https://github.com/oxalica/nil
-    statix # Lints and suggestions for the Nix programming language - https://github.com/oppiliappan/statix
-    nh # Yet another Nix CLI helper - https://github.com/nix-community/nh
-    cachix # A service for Nix binary cache hosting - https://github.com/cachix/cachix
-  ];
 
   programs = {
     bat.enable = true; # A cat(1) clone with wings - https://github.com/sharkdp/bat
