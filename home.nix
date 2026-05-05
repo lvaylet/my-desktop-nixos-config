@@ -134,12 +134,13 @@
       enable = true;
       profiles.default = {
         extensions = with pkgs.vscode-extensions; [
-          vscodevim.vim # Vim emulation for Visual Studio Code
+          vscodevim.vim # Vim Emulation
+          davidanson.vscode-markdownlint # Markdown Linting and Style Checking
 
           # Nix
           # ---
           jnoortheen.nix-ide # Nix IDE
-          bbenoist.nix # Nix Language Support for Visual Studio Code
+          bbenoist.nix # Nix Language Support
           kamadorueda.alejandra # The Uncompromising Nix Code Formatter
         ];
         userSettings = {
