@@ -181,6 +181,9 @@
           "terminal.integrated.lineHeight" = 1.2;
 
           "window.menuBarVisibility" = "toggle";
+          # Adjust zoom level. Each increment above 0 (e.g. 1) or below (e.g. -1) represents zooming 20% larger or
+          # smaller. You can also enter decimals to adjust the zoom level with a finer granularity.
+          "window.zoomLevel" = 1;
 
           # Language Specific Editor Settings
           # ---
