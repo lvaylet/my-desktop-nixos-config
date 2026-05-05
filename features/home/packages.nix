@@ -1,4 +1,4 @@
-_: {
+{pkgs, ...}: {
   home-manager.users.laurent.home.packages = with pkgs; [
     # Fonts
     # ---
