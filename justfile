@@ -17,7 +17,7 @@ test:
   nh os test .
 
 format:
-  alejandra .
+  nix fmt
 
 lint:
   deadnix
