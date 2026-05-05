@@ -35,22 +35,24 @@
   } @ inputs: let
     forEachSystem = nixpkgs.lib.genAttrs ["x86_64-linux"];
   in {
-    nixosConfigurations."nixos-desktop" = nixpkgs.lib.nixosSystem {
-      specialArgs = {inherit inputs;};
-      modules = [
-        ./configuration.nix
+    nixosConfigurations = {
+      desktop-pc = nixpkgs.lib.nixosSystem {
+        specialArgs = {inherit inputs;};
+        modules = [
+          ./configuration.nix
 
-        home-manager.nixosModules.home-manager
-        {
-          home-manager = {
-            useGlobalPkgs = true;
-            useUserPackages = true;
-            users.laurent = import ./home.nix;
-          };
-        }
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.laurent = import ./home.nix;
+            };
+          }
 
-        nvf.nixosModules.default
-      ];
+          nvf.nixosModules.default
+        ];
+      };
     };
 
     # Run the hooks with `nix fmt`.
