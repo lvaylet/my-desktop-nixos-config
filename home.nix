@@ -134,6 +134,8 @@
       enable = true;
       profiles.default = {
         extensions = with pkgs.vscode-extensions; [
+          vscodevim.vim # Vim emulation for Visual Studio Code
+
           # Nix
           # ---
           jnoortheen.nix-ide # Nix IDE
