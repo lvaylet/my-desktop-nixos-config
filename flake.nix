@@ -4,6 +4,9 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    import-tree.url = "github:mightyiam/import-tree";
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -26,93 +29,16 @@
     git-hooks.url = "github:cachix/git-hooks.nix";
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    home-manager,
-    nvf,
+  outputs = inputs @ {
+    flake-parts,
+    import-tree,
     ...
-  } @ inputs: let
-    forEachSystem = nixpkgs.lib.genAttrs ["x86_64-linux"];
-  in {
-    nixosConfigurations = {
-      desktop-pc = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs;};
-        modules = [
-          ./configuration.nix
+  }:
+    flake-parts.lib.mkFlake {inherit inputs;} {
+      systems = ["x86_64-linux"];
 
-          home-manager.nixosModules.home-manager
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              users.laurent = import ./home.nix;
-            };
-          }
-
-          nvf.nixosModules.default
-        ];
-      };
+      imports = [
+        (import-tree ./parts)
+      ];
     };
-
-    # Run the hooks with `nix fmt`.
-    formatter = forEachSystem (
-      system: let
-        pkgs = nixpkgs.legacyPackages.${system};
-        inherit (self.checks.${system}.pre-commit-check) config;
-        inherit (config) package configFile;
-        script = ''
-          ${pkgs.lib.getExe package} run --all-files --config ${configFile}
-        '';
-      in
-        pkgs.writeShellScriptBin "pre-commit-run" script
-    );
-
-    # Run the hooks in a sandbox with `nix flake check`.
-    # Read-only filesystem and no internet access.
-    checks = forEachSystem (system: {
-      pre-commit-check = inputs.git-hooks.lib.${system}.run {
-        src = ./.;
-        hooks = {
-          # https://github.com/cachix/git-hooks.nix#built-in-hooks
-
-          # Nix
-          alejandra.enable = true;
-          deadnix.enable = true;
-          flake-checker.enable = true;
-          statix.enable = true;
-
-          # Secret Detection
-          pre-commit-hook-ensure-sops.enable = true;
-          ripsecrets.enable = true;
-          trufflehog.enable = true;
-
-          # Misc
-          check-added-large-files.enable = true;
-          check-case-conflicts.enable = true;
-          check-executables-have-shebangs.enable = true;
-          check-shebang-scripts-are-executable.enable = true;
-          detect-private-keys.enable = true;
-          end-of-file-fixer.enable = true;
-          fix-byte-order-marker.enable = true;
-          mixed-line-endings.enable = true;
-          trim-trailing-whitespace.enable = true;
-        };
-      };
-    });
-
-    # Enter a development shell with `nix develop`.
-    # The hooks will be installed automatically.
-    # Or run pre-commit manually with `nix develop -c pre-commit run --all-files`
-    devShells = forEachSystem (system: {
-      default = let
-        pkgs = nixpkgs.legacyPackages.${system};
-        inherit (self.checks.${system}.pre-commit-check) shellHook enabledPackages;
-      in
-        pkgs.mkShell {
-          inherit shellHook;
-          buildInputs = enabledPackages;
-        };
-    });
-  };
 }
