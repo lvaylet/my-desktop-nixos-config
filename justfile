@@ -1,20 +1,20 @@
 default: format lint build
 
 # Rebuild
-build:
-  nh os build .
+build configuration="desktop-pc":
+  nh os build .#{{configuration}}
 
 # Rebuild and switch
-switch:
-  nh os switch .
+switch configuration="desktop-pc":
+  nh os switch .#{{configuration}}
 
 # Rebuild and switch after boot
-boot:
-  nh os boot .
+boot configuration="desktop-pc":
+  nh os boot .#{{configuration}}
 
 # Rebuild and activate but not switch
-test:
-  nh os test .
+test configuration="desktop-pc":
+  nh os test .#{{configuration}}
 
 format:
   nix fmt
