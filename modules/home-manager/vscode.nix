@@ -10,6 +10,19 @@
         # Linters and LSPs
         # ---
         davidanson.vscode-markdownlint # Markdown Linting and Style Checking
+        timonwong.shellcheck # ShellCheck for VS Code
+
+        # Debuggers
+        # ---
+        vadimcn.vscode-lldb # Native debugger based on LLDB
+
+        # Code Runners
+        # ---
+        formulahendry.code-runner # Run code snippet or code file for multiple languages
+
+        # Dependencies & Manifests
+        # ---
+        fill-labs.dependi # Dependency management for Cargo.toml, package.json, etc.
 
         # Themes and Icons
         # ---
@@ -30,6 +43,11 @@
         tamasfe.even-better-toml # Fully-featured TOML support
       ];
       userSettings = {
+        # Code Runner
+        "code-runner.runInTerminal" = true;
+        "code-runner.saveFileBeforeRun" = true;
+        "code-runner.clearPreviousOutput" = true;
+
         # This property will be used to generate `settings.json`:
         # https://code.visualstudio.com/docs/getstarted/settings#_settingsjson
         "editor.fontFamily" = "MesloLGM Nerd Font";

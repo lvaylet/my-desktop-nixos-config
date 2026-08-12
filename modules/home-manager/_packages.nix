@@ -13,6 +13,7 @@ in {
         # Development
         # ---
         antigravity # Experience liftoff with the next-gen agent platform - https://antigravity.google/
+        shellcheck # Shell script analysis tool - https://www.shellcheck.net/
 
         # Internet
         # ---

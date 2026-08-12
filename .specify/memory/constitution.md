@@ -84,4 +84,3 @@ This constitution defines the supreme operational and code standards for `my-nix
 - **Compliance**: All generated specifications (`/speckit-*`), plans, and tasks MUST verify alignment with these core principles during review and convergence.
 
 **Version**: 1.0.0 | **Ratified**: 2026-08-12 | **Last Amended**: 2026-08-12
-
