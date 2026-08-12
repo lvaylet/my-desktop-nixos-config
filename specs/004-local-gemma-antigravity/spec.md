@@ -15,24 +15,24 @@
 - Q: Which local inference backend should serve the Gemma 4 12B model on the desktop workstation? → A: Ollama with CUDA acceleration (`services.ollama`) providing a native NixOS system service and OpenAI-compatible API endpoint (Option A).
 - Q: Which model quantization precision profile should be targeted for running Gemma 4 12B on the 16 GB RTX 5070 Ti? → A: 8-bit quantization (`q8_0`) targeting ~13–14 GB VRAM footprint for near-FP16 fidelity while fully fitting within the 16 GB GPU VRAM (Option B).
 - Q: How should the Antigravity CLI configuration and its default local model endpoint be provisioned in the user environment? → A: Dedicated declarative Home Manager module (`modules/home-manager/antigravity.nix`) configuring the CLI package, local model endpoint, and default runtime settings (Option A).
-- Q: How should the Gemma 4 12B model weights be initialized and pulled onto the workstation? → A: Declarative service loading via `services.ollama.loadModels` ensuring automatic download and preparation on service activation (Option A).
+- Q: How should the Gemma 4 12B model weights be initialized and pulled onto the workstation? → A: Operational recipe on demand via task runner (`just download-model` / CLI) — the system service starts empty and the user triggers model downloads when ready (Option B).
 
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Local Hardware-Accelerated Model Inference (Priority: P1)
 
-A developer working on the desktop workstation needs a local large language model inference service (Ollama with CUDA) capable of running an 8-bit quantized Gemma 4 12B model (`q8_0`) entirely offline. The service must automatically load the model on activation and fully utilize the NVIDIA GeForce RTX 5070 Ti (16 GB VRAM) and system RAM (32 GB) to achieve near-FP16 precision, fast token generation, and minimal response latency without sending any private code or prompts across external networks.
+A developer working on the desktop workstation needs a local large language model inference service (Ollama with CUDA) capable of running an 8-bit quantized Gemma 4 12B model (`q8_0`) entirely offline. The service must start quickly without blocking system rebuilds, allow on-demand model acquisition via task runner (`just download-model`), and fully utilize the NVIDIA GeForce RTX 5070 Ti (16 GB VRAM) and system RAM (32 GB) to achieve near-FP16 precision, fast token generation, and minimal response latency without sending any private code or prompts across external networks.
 
 **Why this priority**: Foundational requirement. Without a functioning, GPU-accelerated local model execution environment on the workstation, downstream developer tools and coding assistants cannot function offline.
 
-**Independent Test**: Start the local Ollama service on the desktop workstation, issue a prompt via the local inference interface, and verify that the 8-bit Gemma 4 12B model generates coherent responses while actively utilizing dedicated GPU VRAM (~13–14 GB) and processing the workload with low latency.
+**Independent Test**: Start the local Ollama service on the desktop workstation, pull the model via `just download-model`, issue a prompt via the local inference interface, and verify that the 8-bit Gemma 4 12B model generates coherent responses while actively utilizing dedicated GPU VRAM (~13–14 GB) and processing the workload with low latency.
 
 **Acceptance Scenarios**:
 
-1. **Given** the desktop workstation is running with an NVIDIA GeForce RTX 5070 Ti GPU, **When** the local Ollama service starts, **Then** the 8-bit Gemma 4 12B model (`q8_0`) is automatically loaded via `loadModels` into memory with model layers offloaded to the GPU's 16 GB VRAM for accelerated computation via CUDA.
-2. **Given** the local model is loaded and ready, **When** a user or client application submits a prompt, **Then** the model streams generated responses locally with zero outbound network traffic.
-3. **Given** the workstation is disconnected from the internet, **When** inference requests are submitted, **Then** the local model continues to generate completions without degradation or external connectivity errors.
-4. **Given** the local inference service is enabled, **When** the workstation boots or user logs in, **Then** the Ollama service starts reliably in the background without requiring manual terminal startup commands.
+1. **Given** the desktop workstation is running with an NVIDIA GeForce RTX 5070 Ti GPU, **When** the local Ollama service starts, **Then** it starts immediately without blocking system build or activation on heavy model downloads.
+2. **Given** the Ollama service is active, **When** the user runs `just download-model model="gemma4:12b"`, **Then** the model weights are retrieved and stored into persistent storage (`/var/lib/ollama/models`).
+3. **Given** the local model is loaded, **When** a user or client application submits a prompt, **Then** the model streams generated responses locally with zero outbound network traffic.
+4. **Given** the workstation is disconnected from the internet, **When** inference requests are submitted for a downloaded model, **Then** the local model continues to generate completions without degradation or external connectivity errors.
 
 ---
 
@@ -49,7 +49,7 @@ A developer needs the latest version of Antigravity CLI available in their termi
 1. **Given** a user terminal session on the desktop workstation, **When** invoking the Antigravity CLI, **Then** the latest binary is immediately executable from the standard user PATH via Home Manager.
 2. **Given** Antigravity CLI is executed with a coding or explanation prompt, **When** it dispatches the request, **Then** it automatically routes the request to the local Ollama Gemma 4 12B model service.
 3. **Given** an interactive or multi-turn coding session in Antigravity CLI, **When** contextual code snippets and instructions are provided, **Then** the local model processes the context and streams responses back to the CLI in real time.
-4. **Given** the local Ollama service is temporarily unreachable, **When** Antigravity CLI is invoked, **Then** it presents a clear, actionable diagnostic error explaining the local service status rather than failing silently or attempting unauthorized cloud fallbacks.
+4. **Given** the local Ollama service is temporarily unreachable or the model is not yet downloaded, **When** Antigravity CLI is invoked, **Then** it presents a clear, actionable diagnostic error explaining the local service status rather than failing silently or attempting unauthorized cloud fallbacks.
 
 ---
 
@@ -89,14 +89,14 @@ The system operator needs clear visibility into the status of the local model ru
 - What happens when available VRAM is partially occupied by other graphical applications? The Ollama runtime dynamically manages layer offloading between the 16 GB VRAM and 32 GB system RAM so the model loads without crashing the display server.
 - What happens when network connectivity is lost completely? Both the Ollama inference service and Antigravity CLI operate 100% locally with zero cloud dependencies, ensuring continuous offline productivity.
 - What happens when multiple concurrent CLI or client requests are submitted to the local model? The inference service queues or serializes concurrent requests cleanly without memory leaks or process crashes.
-- What happens if the model weights are not present or corrupted on first initialization? The system alerts the operator with clear diagnostic messages detailing the missing model asset and steps to populate it.
+- What happens if the model weights are not yet downloaded? The system alerts the operator with clear diagnostic messages detailing how to pull the model on demand (`just download-model`).
 
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
 
 - **FR-001**: The system MUST provide a declarative local Ollama inference service (`services.ollama` via a modular NixOS module `modules/nixos/ollama.nix`) on the `desktop` (`desktop-pc`) machine profile.
-- **FR-002**: The inference service MUST declaratively load and serve the 8-bit quantized (`q8_0`) local Gemma 4 12B model on startup via `services.ollama.loadModels`.
+- **FR-002**: The inference service MUST serve the 8-bit quantized (`q8_0`) local Gemma 4 12B model downloaded on demand via operational tooling.
 - **FR-003**: The inference service MUST leverage NVIDIA GPU hardware acceleration (CUDA), offloading model computation to the 16 GB VRAM of the NVIDIA GeForce RTX 5070 Ti.
 - **FR-004**: The system MUST allocate and balance memory usage across the 16 GB VRAM (~13–14 GB model footprint) and 32 GB system RAM to ensure the graphical desktop environment remains responsive during active inference.
 - **FR-005**: The system MUST provide the latest version of Antigravity CLI installed in the user's environment on the desktop workstation via a dedicated Home Manager module (`modules/home-manager/antigravity.nix`).
@@ -104,12 +104,13 @@ The system operator needs clear visibility into the status of the local model ru
 - **FR-007**: The local inference workflow and Antigravity CLI MUST operate entirely offline with zero outbound network calls for model inference or code completion.
 - **FR-008**: The system MUST provide diagnostic capabilities to inspect model service health, GPU/VRAM utilization, and CLI connectivity.
 - **FR-009**: The local model configuration, inference service, and user CLI tooling MUST be declared hermetically and reproducibly within the repository's modular NixOS and Home Manager architecture.
-- **FR-010**: System updates and generation switches MUST preserve persistent model weight assets without requiring re-downloading across rebuilds.
+- **FR-010**: System updates and generation switches MUST start the service cleanly and preserve persistent model weight assets in `/var/lib/ollama/models` without downloading large blobs during build or activation.
+- **FR-011**: The system MUST provide an on-demand task runner recipe (`just download-model`) to pull model weights without requiring declarative rebuilds.
 
 ### Key Entities
 
 - **Ollama Inference Service**: The background system service responsible for loading model weights into GPU VRAM and serving inference requests over a local communication socket or loopback interface (`http://127.0.0.1:11434`).
-- **Gemma 4 12B Model Asset**: The locally stored 8-bit quantized (`q8_0`) model weights and parameters declared for automatic loading via `services.ollama.loadModels`.
+- **Gemma 4 12B Model Asset**: The locally stored 8-bit quantized (`q8_0`) model weights and parameters downloaded on demand into `/var/lib/ollama/models`.
 - **Antigravity CLI Client**: The terminal-based developer assistance tool configured via Home Manager to interact with the local model for code generation, agentic tasks, and query resolution.
 - **Hardware Resource Budget**: The physical compute profile (GeForce RTX 5070 Ti with 16 GB VRAM and 32 GB system RAM) governing execution boundaries and performance tuning.
 
@@ -121,7 +122,7 @@ The system operator needs clear visibility into the status of the local model ru
 - **SC-002**: Token generation begins streaming within 2 seconds of prompt submission on the desktop workstation under normal operating conditions.
 - **SC-003**: 100% of model inference requests, code context transfers, and completions occur locally without transmitting data over external networks.
 - **SC-004**: The desktop graphical environment maintains smooth interactivity (no desktop freezes or compositor crashes) during sustained continuous model inference.
-- **SC-005**: The entire local model inference and Antigravity CLI configuration evaluates and builds cleanly through standard declarative system configuration commands.
+- **SC-005**: System rebuilds and profile switches complete rapidly without waiting on multi-gigabyte model downloads during Nix activation.
 
 ## Assumptions
 

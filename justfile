@@ -166,6 +166,18 @@ ollama-logs:
 ollama-models:
   curl -s http://127.0.0.1:11434/api/tags | jq .
 
+# download model weights on demand
+[group('local-ai')]
+download-model model="gemma4:12b":
+  #!/usr/bin/env bash
+  set -euo pipefail
+  echo "Downloading model '{{model}}' via Ollama..."
+  if command -v ollama >/dev/null 2>&1; then
+    ollama pull {{model}}
+  else
+    curl -X POST http://127.0.0.1:11434/api/pull -d '{"name": "{{model}}"}'
+  fi
+
 # check NVIDIA GPU and VRAM utilization
 [group('local-ai')]
 gpu-status:

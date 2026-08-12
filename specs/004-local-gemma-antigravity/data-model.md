@@ -8,7 +8,7 @@
 erDiagram
     NIXOS_HOST ||--|| HARDWARE_RESOURCE_BUDGET : possesses
     NIXOS_HOST ||--|| OLLAMA_SERVICE : manages_daemon
-    OLLAMA_SERVICE ||--|{ GEMMA_MODEL_ASSET : loads_and_serves
+    OLLAMA_SERVICE ||--|{ GEMMA_MODEL_ASSET : serves_on_demand
     OLLAMA_SERVICE ||--|| GPU_ACCELERATION_CONTEXT : utilizes
     USER_ENVIRONMENT ||--|| ANTIGRAVITY_CONFIG : declares
     ANTIGRAVITY_CONFIG ||--|| ANTIGRAVITY_CLI : provisions
@@ -25,10 +25,9 @@ erDiagram
     OLLAMA_SERVICE {
         string service_name "ollama"
         boolean enabled "true"
-        string acceleration "cuda"
+        string package "pkgs.ollama-cuda"
         string listen_address "127.0.0.1:11434"
         string state_directory "/var/lib/ollama"
-        string[] load_models "gemma4:12b"
     }
 
     GEMMA_MODEL_ASSET {
@@ -38,6 +37,7 @@ erDiagram
         string quantization "q8_0"
         int memory_footprint_gb "13"
         string storage_path "/var/lib/ollama/models"
+        string download_method "just download-model"
     }
 
     GPU_ACCELERATION_CONTEXT {
@@ -81,10 +81,9 @@ Defines the physical compute, memory, and acceleration boundaries on the `deskto
 ### 2. `OLLAMA_SERVICE`
 Represents the system-level NixOS background daemon (`modules/nixos/ollama.nix`).
 - **`enable`** (boolean): Activates the systemd `ollama.service` unit (`true`).
-- **`acceleration`** (string): Acceleration backend (`"cuda"`).
+- **`package`** (package): `pkgs.ollama-cuda` (CUDA-accelerated binary).
 - **`host`** (string): Bind address (`"127.0.0.1"`).
 - **`port`** (integer): TCP port (`11434`).
-- **`loadModels`** (list of strings): Declaratively managed model list (`[ "gemma4:12b" ]`).
 - **`home`** (path): Persistent state directory (`/var/lib/ollama`).
 
 ### 3. `GEMMA_MODEL_ASSET`
@@ -93,6 +92,7 @@ Represents the local large language model weights and configuration.
 - **`quantization`** (string): 8-bit precision profile (`q8_0`).
 - **`parameter_count`** (string): `12B` parameters.
 - **`storage_location`** (path): `/var/lib/ollama/models/blobs/`.
+- **`lifecycle`**: Downloaded on demand via `just download-model model="gemma4:12b"`.
 
 ### 4. `ANTIGRAVITY_CONFIG`
 Represents the user-level Home Manager module configuration (`modules/home-manager/antigravity.nix`).
@@ -112,13 +112,11 @@ stateDiagram-v2
     state SystemBoot {
         [*] --> InitNvidia: Load NVIDIA Driver & CUDA Runtime
         InitNvidia --> StartOllama: systemctl start ollama.service
-        StartOllama --> CheckModel: Check /var/lib/ollama/models
-        CheckModel --> ModelReady: gemma4:12b Present
-        CheckModel --> PullModel: Model Missing (Initial Run)
-        PullModel --> ModelReady: Download & Store Blobs
+        StartOllama --> ServiceListening: Listening on 127.0.0.1:11434 (Starts Instantly)
     }
 
-    ModelReady --> ServiceListening: Listening on 127.0.0.1:11434
+    ServiceListening --> ModelAcquisition: On Demand 'just download-model'
+    ModelAcquisition --> ServiceListening: Model Stored in /var/lib/ollama/models
 
     state ServiceListening {
         [*] --> IdleState: Idle (0% Compute, ~200MB Baseline VRAM)

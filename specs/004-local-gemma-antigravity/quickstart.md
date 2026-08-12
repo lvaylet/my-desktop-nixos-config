@@ -41,29 +41,32 @@ Activate the new configuration in temporary testing mode without updating defaul
 just test configuration="desktop-pc"
 ```
 
-**Expected Outcome**: The system applies the new generation in memory, starts `ollama.service`, and configures user environment variables without errors.
+**Expected Outcome**: The system applies the new generation in memory, starts `ollama.service`, and configures user environment variables without errors or long download delays.
 
 ---
 
-## Scenario 3: Ollama Service & CUDA Acceleration Verification
+## Scenario 3: Ollama Service Status & On-Demand Model Download
 
-Verify that the systemd service is active and utilizing NVIDIA GPU hardware acceleration:
+Verify that the systemd service is active, and download the Gemma 4 12B model on demand:
 
 ```bash
-# Check service status
-systemctl status ollama.service
+# 1. Check service status
+just ollama-status
 
-# Verify Ollama is listening on loopback
+# 2. Verify Ollama is listening on loopback
 curl -s http://127.0.0.1:11434/
 
-# Check installed models
-curl -s http://127.0.0.1:11434/api/tags | jq .
+# 3. Download Gemma 4 12B model weights on demand
+just download-model model="gemma4:12b"
+
+# 4. Verify model is installed
+just ollama-models
 ```
 
 **Expected Outcome**:
-- `systemctl` reports `active (running)`.
+- `just ollama-status` reports `active (running)`.
 - `curl` returns `"Ollama is running"`.
-- `gemma4:12b` is listed in the models array.
+- `just ollama-models` lists `gemma4:12b`.
 
 ---
 
@@ -73,16 +76,10 @@ Issue a direct completion request to the model and observe GPU VRAM allocation:
 
 ```bash
 # In a separate terminal, monitor GPU usage:
-watch -n 0.5 nvidia-smi
+just gpu-status
 
 # Issue a test prompt to the local model:
-curl -s http://127.0.0.1:11434/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "gemma4:12b",
-    "messages": [{"role": "user", "content": "Write a short Nix flake snippet."}],
-    "stream": false
-  }' | jq .
+just test-inference prompt="Write a short Nix flake snippet."
 ```
 
 **Expected Outcome**:
@@ -121,7 +118,7 @@ antigravity chat "Write a function in Rust that parses JSON strings safely."
 
 While a large coding prompt is generating in the background:
 1. Move graphical windows, switch desktop workspaces, and browse web pages in a browser.
-2. Verify display fluidness using `nvtop` or `nvidia-smi`.
+2. Verify display fluidness using `nvtop` or `just gpu-status`.
 
 **Expected Outcome**:
 - Desktop display remains fluid with ~2–3 GB VRAM available for display compositing.

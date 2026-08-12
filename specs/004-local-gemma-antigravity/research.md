@@ -5,7 +5,7 @@
 ## Decision 1: Local Inference Engine & Service Architecture
 
 ### Decision
-Implement the local inference runtime using NixOS native `services.ollama` with explicit CUDA hardware acceleration (`acceleration = "cuda"`) in a dedicated modular file `modules/nixos/ollama.nix`, imported directly by `machines/desktop-pc/configuration.nix`.
+Implement the local inference runtime using NixOS native `services.ollama` with explicit CUDA hardware acceleration (`package = pkgs.ollama-cuda`) in a dedicated modular file `modules/nixos/ollama.nix`, imported directly by `machines/desktop-pc/configuration.nix`.
 
 ### Rationale
 - **Native NixOS Module**: NixOS provides upstream support for `services.ollama` with out-of-the-box systemd daemon management, log rotation, and dynamic library linking against NVIDIA CUDA drivers.
@@ -53,16 +53,16 @@ Create a dedicated Home Manager module `modules/home-manager/antigravity.nix` im
 
 ---
 
-## Decision 4: Declarative Model Pre-Loading & Persistent Storage
+## Decision 4: On-Demand Model Download & Persistent Storage (Option B)
 
 ### Decision
-Configure `services.ollama.loadModels = [ "gemma4:12b" ];` within `modules/nixos/ollama.nix` with persistent model weight storage located at `/var/lib/ollama/models`.
+Configure the Ollama daemon without declarative `loadModels` in NixOS, allowing the system service to start empty, and provide an operational task runner recipe (`just download-model model="gemma4:12b"`) to download and store model weights into `/var/lib/ollama/models` on demand.
 
 ### Rationale
-- **Declarative System State**: Using `loadModels` instructs the NixOS activation and systemd service to ensure that the specified model tag is downloaded, validated, and ready in the local model store on service startup.
-- **Persistence Across Generations**: Model weights reside in `/var/lib/ollama`, which is persistent state outside the ephemeral Nix store. System generation switches (`just switch`) and rollbacks (`just boot`) will not delete or re-download model blobs.
-- **Zero Large Binary Blobs in Version Control**: Avoids committing multi-gigabyte GGUF/checkpoint binaries into the Git repository, preserving fast repository cloning and clean CI workflows.
+- **Fast System Builds & Switches**: Omitting `loadModels` prevents NixOS rebuilds (`just switch` / `just test`) from blocking or timing out during system activation while downloading multi-gigabyte model blobs.
+- **Persistence Across Generations**: Model weights downloaded on demand reside in `/var/lib/ollama/models`, which is persistent state outside the ephemeral Nix store. System generation switches and rollbacks will not delete or re-download model blobs.
+- **Zero Large Binary Blobs in Version Control**: Avoids committing multi-gigabyte GGUF/checkpoint binaries into the Git repository or Nix store derivations.
 
 ### Alternatives Considered
-- *Manual imperative download (`ollama pull gemma4:12b` after boot)*: Leaves the machine in an incomplete state after initial declarative deployment.
-- *Packaging model weights as Nix derivations in Nix store*: Causes excessive store bloat, slows down Nix evaluation, and is impractical for multi-gigabyte models with binary cache limits.
+- *Declarative `loadModels` during activation (Option A)*: Causes system rebuilds/switches to hang or take excessively long while downloading large model files during systemd activation.
+- *Packaging model weights as Nix derivations in Nix store*: Causes store bloat and exceeds binary cache upload thresholds.
