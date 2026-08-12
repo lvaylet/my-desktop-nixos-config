@@ -1,5 +1,7 @@
 # my-nixos-configurations
 
+[![CI](https://github.com/lvaylet/my-nixos-configurations/actions/workflows/ci.yml/badge.svg)](https://github.com/lvaylet/my-nixos-configurations/actions/workflows/ci.yml)
+
 Declarative NixOS multi-host configurations, Home Manager user environments, and portable cross-platform development toolchains.
 
 ## Quickstart & Environment Setup
@@ -121,6 +123,16 @@ git+file:///home/laurent/workspace/github.com/lvaylet/my-nixos-configurations
     ├───homelab: NixOS configuration
     └───iso: NixOS configuration
 ```
+
+## Continuous Integration
+
+Continuous integration runs on GitHub Actions using a two-stage gated pipeline ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)):
+
+1. **Stage 1 (Quality Gate & Security)**: Runs `nix flake check` to hermetically validate code formatting (`alejandra`), static analysis (`statix`, `deadnix`), flake syntax (`flake-checker`), and secret scanning filters (`trufflehog`, `ripsecrets`, `detect-private-keys`).
+2. **Stage 2 (Matrix System Builds)**: Concurrently evaluates and builds top-level derivations for all target configurations (`desktop-pc`, `homelab`, `iso`).
+3. **Build Acceleration**: Leverages [Magic Nix Cache](https://github.com/DeterminateSystems/magic-nix-cache-action) and the Determinate Nix Installer for tokenless, zero-configuration GitHub Actions store caching.
+
+---
 
 ## Useful Nix Commands
 
