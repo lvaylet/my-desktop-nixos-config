@@ -66,28 +66,28 @@ classDiagram
 ```mermaid
 stateDiagram-v2
     [*] --> Initialized: Operator runs just command (switch/test/boot/build)
-    
+
     Initialized --> LocalEvaluation: target == "" (local execution)
     Initialized --> RemoteEvaluation: target != "" (remote execution)
-    
+
     LocalEvaluation --> CheckLocalNixOS: Verify /etc/NIXOS presence
     CheckLocalNixOS --> LocalExecution: Host is NixOS
     CheckLocalNixOS --> LocalAbort: Host is non-NixOS & action is switch/test/boot
     CheckLocalNixOS --> LocalBuildOnly: Host is non-NixOS & action is build
-    
+
     LocalExecution --> LocalSuccess: nh os switch/test/boot succeeds
     LocalBuildOnly --> LocalSuccess: nix build toplevel succeeds
     LocalAbort --> ErrorState: Display informative error message
-    
+
     RemoteEvaluation --> ValidateSSHConnection: Test SSH accessibility to targetHost
     ValidateSSHConnection --> BuildPhase: Target reachable & authorized
     ValidateSSHConnection --> NetworkError: Host unreachable or auth rejected
-    
+
     BuildPhase --> TransferPhase: Derivation built (locally or on buildHost)
     TransferPhase --> ActivationPhase: Copy closure to target /nix/store
     ActivationPhase --> RemoteSuccess: nixos-rebuild activates generation
     ActivationPhase --> RollbackSafeState: Activation failure (previous generation remains active)
-    
+
     LocalSuccess --> [*]
     RemoteSuccess --> [*]
     NetworkError --> ErrorState: Abort with connection diagnostics
