@@ -28,6 +28,7 @@
     # ---
     ./../../modules/nixos/neovim.nix
     ./../../modules/nixos/nvidia.nix
+    ./../../modules/nixos/ollama.nix
     ./../../modules/nixos/podman.nix
     ./../../modules/nixos/printing.nix
     ./../../modules/nixos/sound.nix
@@ -51,6 +52,7 @@
 
           # Programs / Services
           # ---
+          ./../../modules/home-manager/antigravity.nix
           ./../../modules/home-manager/bat.nix
           ./../../modules/home-manager/direnv.nix
           ./../../modules/home-manager/eza.nix

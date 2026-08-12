@@ -146,3 +146,34 @@ clean-all keep="1":
   else
     nix-collect-garbage --delete-old
   fi
+
+###################################
+# Local AI & Model Tooling
+###################################
+
+# show Ollama systemd service status
+[group('local-ai')]
+ollama-status:
+  systemctl status ollama.service
+
+# follow Ollama service logs
+[group('local-ai')]
+ollama-logs:
+  journalctl -u ollama.service -f
+
+# list installed local models
+[group('local-ai')]
+ollama-models:
+  curl -s http://127.0.0.1:11434/api/tags | jq .
+
+# check NVIDIA GPU and VRAM utilization
+[group('local-ai')]
+gpu-status:
+  nvidia-smi
+
+# test local Gemma 4 12B model inference
+[group('local-ai')]
+test-inference prompt="Write a short Nix expression.":
+  curl -s http://127.0.0.1:11434/v1/chat/completions \
+    -H "Content-Type: application/json" \
+    -d '{"model": "gemma4:12b", "messages": [{"role": "user", "content": "{{prompt}}"}], "stream": false}' | jq .
