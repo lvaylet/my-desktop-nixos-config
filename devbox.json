@@ -1,0 +1,24 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.0/.schema/devbox.schema.json",
+  "packages": [
+    "alejandra@latest",
+    "deadnix@latest",
+    "statix@latest",
+    "just@latest",
+    "nh@latest",
+    "ripsecrets@latest",
+    "trufflehog@latest"
+  ],
+  "shell": {
+    "init_hook": [
+      "echo '🚀 Devbox environment loaded: all NixOS development & verification tools ready.'"
+    ],
+    "scripts": {
+      "check": "just check",
+      "lint": "just lint",
+      "fmt": "just fmt",
+      "build": "just build",
+      "test": "just test"
+    }
+  }
+}
