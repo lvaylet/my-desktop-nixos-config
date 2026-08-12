@@ -36,6 +36,9 @@
 
     systems = [
       "x86_64-linux"
+      "aarch64-linux"
+      "x86_64-darwin"
+      "aarch64-darwin"
     ];
     forAllSystems = nixpkgs.lib.genAttrs systems;
 
@@ -128,7 +131,12 @@
       in
         pkgs.mkShell {
           inherit shellHook;
-          buildInputs = enabledPackages;
+          buildInputs =
+            enabledPackages
+            ++ (with pkgs; [
+              just
+              nh
+            ]);
         };
     });
   };

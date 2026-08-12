@@ -8,23 +8,63 @@ default:
 
 # rebuild
 [group('(re)build')]
-build configuration="desktop-pc":
-  nh os build .#{{configuration}}
+build configuration="desktop-pc" target="":
+  #!/usr/bin/env bash
+  set -euo pipefail
+  if [ -z "{{target}}" ]; then
+    if command -v nh >/dev/null 2>&1 && [ -e /etc/NIXOS ]; then
+      nh os build .#{{configuration}}
+    else
+      nix build .#nixosConfigurations.{{configuration}}.config.system.build.toplevel
+    fi
+  else
+    nixos-rebuild build --flake .#{{configuration}} --target-host {{target}}
+  fi
 
 # rebuild and switch
 [group('(re)build')]
-switch configuration="desktop-pc":
-  nh os switch .#{{configuration}}
+switch configuration="desktop-pc" target="":
+  #!/usr/bin/env bash
+  set -euo pipefail
+  if [ -z "{{target}}" ]; then
+    if [ ! -e /etc/NIXOS ]; then
+      echo "Error: Local system is not NixOS. To deploy to a remote NixOS host, specify the target parameter, e.g.: just switch {{configuration}} <target-host>" >&2
+      exit 1
+    fi
+    nh os switch .#{{configuration}}
+  else
+    nixos-rebuild switch --flake .#{{configuration}} --target-host {{target}} --use-remote-sudo
+  fi
 
 # rebuild and switch after boot
 [group('(re)build')]
-boot configuration="desktop-pc":
-  nh os boot .#{{configuration}}
+boot configuration="desktop-pc" target="":
+  #!/usr/bin/env bash
+  set -euo pipefail
+  if [ -z "{{target}}" ]; then
+    if [ ! -e /etc/NIXOS ]; then
+      echo "Error: Local system is not NixOS. To set boot entry on a remote NixOS host, specify the target parameter, e.g.: just boot {{configuration}} <target-host>" >&2
+      exit 1
+    fi
+    nh os boot .#{{configuration}}
+  else
+    nixos-rebuild boot --flake .#{{configuration}} --target-host {{target}} --use-remote-sudo
+  fi
 
 # rebuild and activate but not switch
 [group('(re)build')]
-test configuration="desktop-pc":
-  nh os test .#{{configuration}}
+test configuration="desktop-pc" target="":
+  #!/usr/bin/env bash
+  set -euo pipefail
+  if [ -z "{{target}}" ]; then
+    if [ ! -e /etc/NIXOS ]; then
+      echo "Error: Local system is not NixOS. To test on a remote NixOS host, specify the target parameter, e.g.: just test {{configuration}} <target-host>" >&2
+      exit 1
+    fi
+    nh os test .#{{configuration}}
+  else
+    nixos-rebuild test --flake .#{{configuration}} --target-host {{target}} --use-remote-sudo
+  fi
 
 # build custom ISO image with SSH access for remote installations
 [group('(re)build')]
@@ -88,9 +128,21 @@ delete-old-generations:
 # clean the current user's profiles
 [group('garbage-collection')]
 clean keep="1":
-  nh clean user --keep {{keep}} # keep at least this number of generations
+  #!/usr/bin/env bash
+  set -euo pipefail
+  if command -v nh >/dev/null 2>&1 && [ -e /etc/NIXOS ]; then
+    nh clean user --keep {{keep}} # keep at least this number of generations
+  else
+    nix-collect-garbage --delete-older-than {{keep}}d 2>/dev/null || nix-collect-garbage
+  fi
 
 # clean all profiles
 [group('garbage-collection')]
 clean-all keep="1":
-  nh clean all --keep {{keep}} # keep at least this number of generations
+  #!/usr/bin/env bash
+  set -euo pipefail
+  if command -v nh >/dev/null 2>&1 && [ -e /etc/NIXOS ]; then
+    nh clean all --keep {{keep}} # keep at least this number of generations
+  else
+    nix-collect-garbage --delete-old
+  fi
