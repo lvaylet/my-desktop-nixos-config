@@ -134,6 +134,18 @@ Continuous integration runs on GitHub Actions using a two-stage gated pipeline (
 
 ---
 
+## Local AI Acceleration & Aider CLI Pair-Programming
+
+On the `desktop-pc` workstation (32 GB RAM, NVIDIA GeForce RTX 5070 Ti with 16 GB VRAM), local AI inference is accelerated via Ollama with CUDA support:
+
+- **Local Inference Service ([`modules/nixos/ollama.nix`](modules/nixos/ollama.nix))**: Runs `services.ollama` bound to loopback `http://127.0.0.1:11434` with CUDA hardware acceleration (`pkgs.ollama-cuda`).
+- **On-Demand Model Download (`justfile`)**: Pull the 8-bit quantized Gemma 4 12B model on demand via `just download-model model="gemma4:12b"` without slowing down system rebuilds.
+- **Aider CLI ([`modules/home-manager/aider.nix`](modules/home-manager/aider.nix))**: Full-featured interactive terminal TUI for AI pair-programming (`pkgs.aider-chat`) with git repository mapping, auto-commits, diff views, and local Ollama routing (`OLLAMA_API_BASE=http://127.0.0.1:11434`, `model: ollama/gemma4:12b`).
+- **Offline & Private**: All prompt completions, context ingestion, and code synthesis execute 100% locally on the GPU without cloud network dependencies.
+
+
+---
+
 ## Useful Nix Commands
 
 | Command | Purpose |

@@ -146,3 +146,61 @@ clean-all keep="1":
   else
     nix-collect-garbage --delete-old
   fi
+
+###################################
+# Local AI & Model Tooling
+###################################
+
+# show Ollama systemd service status
+[group('local-ai')]
+ollama-status:
+  systemctl status ollama.service
+
+# follow Ollama service logs
+[group('local-ai')]
+ollama-logs:
+  journalctl -u ollama.service -f
+
+# list installed local models
+[group('local-ai')]
+ollama-models:
+  curl -s http://127.0.0.1:11434/api/tags | jq .
+
+# download model weights on demand
+[group('local-ai')]
+download-model model="gemma4:12b":
+  #!/usr/bin/env bash
+  set -euo pipefail
+  echo "Downloading model '{{model}}' via Ollama..."
+  if command -v ollama >/dev/null 2>&1; then
+    ollama pull {{model}}
+  else
+    curl -X POST http://127.0.0.1:11434/api/pull -d '{"name": "{{model}}"}'
+  fi
+
+# check NVIDIA GPU and VRAM utilization
+[group('local-ai')]
+gpu-status:
+  nvidia-smi
+
+# test local Gemma 4 12B model inference
+[group('local-ai')]
+test-inference prompt="Write a short Nix expression.":
+  curl -s http://127.0.0.1:11434/v1/chat/completions \
+    -H "Content-Type: application/json" \
+    -d '{"model": "gemma4:12b", "messages": [{"role": "user", "content": "{{prompt}}"}], "stream": false}' | jq .
+
+# launch interactive Aider AI pair-programming session with local Gemma 4 model
+[group('local-ai')]
+aider *args="":
+  aider {{args}}
+
+# launch Aider in architect mode with local Gemma 4 model
+[group('local-ai')]
+aider-architect *args="":
+  aider --architect {{args}}
+
+# launch interactive OpenCoder AI pair-programming session with local Gemma 4 model
+[group('local-ai')]
+opencode *args="":
+  opencode {{args}}
