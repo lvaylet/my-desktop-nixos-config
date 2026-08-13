@@ -189,3 +189,8 @@ test-inference prompt="Write a short Nix expression.":
   curl -s http://127.0.0.1:11434/v1/chat/completions \
     -H "Content-Type: application/json" \
     -d '{"model": "gemma4:12b", "messages": [{"role": "user", "content": "{{prompt}}"}], "stream": false}' | jq .
+
+# launch interactive Aider AI pair-programming session with local Gemma 4 model
+[group('local-ai')]
+aider *args="":
+  aider {{args}}

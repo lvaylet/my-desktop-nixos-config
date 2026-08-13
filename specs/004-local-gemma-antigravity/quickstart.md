@@ -1,8 +1,8 @@
-# Quickstart: Local Gemma 4 & Antigravity Validation Guide
+# Quickstart: Local Gemma 4 & Aider CLI Validation Guide
 
-**Feature Branch**: `004-local-gemma-antigravity` | **Date**: 2026-08-12 | **Spec**: [spec.md](spec.md)
+**Feature Branch**: `004-local-gemma-antigravity` | **Date**: 2026-08-12 | **Updated**: 2026-08-13 | **Spec**: [spec.md](spec.md)
 
-This guide documents runnable validation scenarios to verify that the local Gemma 4 12B model acceleration and Antigravity CLI integration function correctly end-to-end on the `desktop-pc` workstation.
+This guide documents runnable validation scenarios to verify that the local 8-bit quantized Gemma 4 12B model acceleration (with 8k context window) and Aider CLI integration function correctly end-to-end on the `desktop-pc` workstation.
 
 ---
 
@@ -41,7 +41,7 @@ Activate the new configuration in temporary testing mode without updating defaul
 just test configuration="desktop-pc"
 ```
 
-**Expected Outcome**: The system applies the new generation in memory, starts `ollama.service`, and configures user environment variables without errors or long download delays.
+**Expected Outcome**: The system applies the new generation in memory, starts `ollama.service`, installs `pkgs.aider-chat`, and configures `~/.aider.conf.yml` and user environment variables without errors or long download delays.
 
 ---
 
@@ -72,7 +72,7 @@ just ollama-models
 
 ## Scenario 4: Direct Local Model Inference & VRAM Allocation
 
-Issue a direct completion request to the model and observe GPU VRAM allocation:
+Issue a direct completion request to the model with 8k context support and observe GPU VRAM allocation:
 
 ```bash
 # In a separate terminal, monitor GPU usage:
@@ -83,34 +83,34 @@ just test-inference prompt="Write a short Nix flake snippet."
 ```
 
 **Expected Outcome**:
-- `nvidia-smi` shows ~13–14 GB VRAM allocated to the Ollama process.
+- `nvidia-smi` shows ~14–15 GB VRAM allocated to the Ollama process (weights + KV cache).
 - Response JSON is returned with valid code generation.
-- Response time demonstrates low latency and fast token generation.
+- Response time demonstrates low latency and fast token generation (~40–50 tokens/sec).
 
 ---
 
-## Scenario 5: Antigravity CLI Developer Workflow
+## Scenario 5: Aider CLI Interactive Pair-Programming Workflow
 
-Open a new terminal shell session to verify the Antigravity CLI integration:
+Launch an interactive Aider pair-programming session:
 
 ```bash
-# 1. Verify environment variables
-echo $ANTIGRAVITY_API_BASE
-# Expected: http://127.0.0.1:11434/v1
+# 1. Verify Aider version
+aider --version
 
-echo $ANTIGRAVITY_MODEL
-# Expected: gemma4:12b
+# 2. Launch Aider pair-programming session via just recipe
+just aider
+```
 
-# 2. Run CLI health check
-antigravity check
-
-# 3. Execute interactive coding prompt
-antigravity chat "Write a function in Rust that parses JSON strings safely."
+Inside the Aider session:
+```text
+> /add README.md
+> Summarize the local AI development setup configured in this repository.
 ```
 
 **Expected Outcome**:
-- Antigravity CLI connects to `127.0.0.1:11434/v1` without errors.
-- Streaming responses render smoothly in the terminal session.
+- Aider starts with the rich terminal TUI, connects to `ollama/gemma4:12b` via `http://127.0.0.1:11434`, and builds the repository map within the 8k context window.
+- Generated code explanations and file edits stream in real time.
+- Changes produce clear diffs and optional auto-commits.
 
 ---
 
@@ -121,5 +121,5 @@ While a large coding prompt is generating in the background:
 2. Verify display fluidness using `nvtop` or `just gpu-status`.
 
 **Expected Outcome**:
-- Desktop display remains fluid with ~2–3 GB VRAM available for display compositing.
+- Desktop display remains fluid with ~1.5–2.0 GB VRAM available for display compositing.
 - Zero GUI crashes, display driver resets, or kernel out-of-memory errors.

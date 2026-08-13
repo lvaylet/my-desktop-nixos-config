@@ -52,7 +52,7 @@
 
           # Programs / Services
           # ---
-          ./../../modules/home-manager/antigravity.nix
+          ./../../modules/home-manager/aider.nix
           ./../../modules/home-manager/bat.nix
           ./../../modules/home-manager/direnv.nix
           ./../../modules/home-manager/eza.nix
