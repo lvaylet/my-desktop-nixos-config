@@ -194,3 +194,8 @@ test-inference prompt="Write a short Nix expression.":
 [group('local-ai')]
 aider *args="":
   aider {{args}}
+
+# launch Aider in architect mode with local Gemma 4 model
+[group('local-ai')]
+aider-architect *args="":
+  aider --architect {{args}}
