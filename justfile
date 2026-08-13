@@ -199,3 +199,8 @@ aider *args="":
 [group('local-ai')]
 aider-architect *args="":
   aider --architect {{args}}
+
+# launch interactive OpenCoder AI pair-programming session with local Gemma 4 model
+[group('local-ai')]
+opencode *args="":
+  opencode {{args}}

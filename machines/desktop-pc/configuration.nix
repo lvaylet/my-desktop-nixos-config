@@ -53,6 +53,7 @@
           # Programs / Services
           # ---
           ./../../modules/home-manager/aider.nix
+          ./../../modules/home-manager/opencode.nix
           ./../../modules/home-manager/bat.nix
           ./../../modules/home-manager/direnv.nix
           ./../../modules/home-manager/eza.nix
